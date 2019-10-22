@@ -1,0 +1,7 @@
+service_description:
+  version: 0.0.1
+  name: anta-test-scheduler-client
+
+servicecomb:
+  rest:
+    address: 0.0.0.0:18097

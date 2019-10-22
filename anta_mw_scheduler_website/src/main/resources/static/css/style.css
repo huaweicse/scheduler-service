@@ -1,0 +1,34 @@
+.card-top{
+     font-size: 20px;
+     color: #fff;
+     background: #29343c;
+     font-weight: bold;
+     text-align: center;
+ }
+.layui-btn{
+    height: 28px;
+    line-height: 28px;
+}
+
+.error{
+    font-size: 16px;
+    color: red;
+}
+
+.tab-padding-top {
+    padding-top: 0px;
+}
+
+.job-li{
+    width: 50%;
+}
+
+.layui-icon-refresh:before {
+    color: #49b768;
+    font-weight: bold;
+}
+
+.layui-icon-download-circle:before {
+    padding-right: 8px;
+    font-weight: bold;
+}

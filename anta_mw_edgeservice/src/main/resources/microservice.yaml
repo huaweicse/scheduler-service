@@ -1,0 +1,63 @@
+APPLICATION_ID: anta-application
+
+service_description:
+  version: 0.0.1
+  name: anta-edgeservice-servicecomb
+#  environment: development
+
+servicecomb:
+  service:
+    registry:
+      address: http://localhost:30100
+      instance:
+        watch: false
+  config:
+    client:
+      serverUri: http://localhost:30113
+      refreshMode: 1
+  rest:
+    address: 0.0.0.0:18090
+    client:
+      connection:
+        maxPoolSize: 100
+      verticle-count: 10
+
+  executor:
+    default:
+      maxThreads-per-group: 500
+  metrics:
+    window_time: 10000
+    publisher:
+      defaultLog:
+        enabled: false
+    Provider:
+      invocation.slow.enabled: true
+      invocation.slow.msTime: 1000
+    Consumer:
+      invocation.slow.enabled: true
+      invocation.slow.msTime: 1000
+
+# 处理链配置
+  handler:
+    chain:
+      Provider:
+        default: qps-flowcontrol-provider
+      Consumer:
+        default: qps-flowcontrol-consumer,loadbalance
+
+  loadbalance:
+    isolation:
+      enabled: false
+    retryEnabled: false
+    retryOnNext: 0
+    retryOnSame: 0
+
+  http:
+    dispatcher:
+      edge:
+        default:
+          enabled: false # overriden by ApiDispatcher
+      rest:
+        enabled: false # overriden by CustomVertxRestDispatcher
+
+gateway.webroot: /anta/anta_mw_edgeservice/src/main/resources
