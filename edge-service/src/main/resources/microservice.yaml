@@ -60,4 +60,4 @@ servicecomb:
       rest:
         enabled: false # overriden by CustomVertxRestDispatcher
 
-gateway.webroot: /anta/anta_mw_edgeservice/src/main/resources
+gateway.webroot: /Code/scheduler-service/anta_mw_edgeservice/src/main/resources
