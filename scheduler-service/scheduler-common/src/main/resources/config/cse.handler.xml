@@ -1,0 +1,4 @@
+<config>
+    <handler id="tracing"
+             class="org.apache.servicecomb.scheduler.common.TracingHandler"/>
+</config>

@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>任务管理</title>
+
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/layui.js"></script>
+
+    <link href="css/layui.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <script>
+        $(document).ready(function () {
+            getSystemJobs();
+            click_anim();
+        });
+    </script>
+</head>
+
+<body>
+<div class="layui-row">
+    <div class="layui-col-md">
+        <div class="layui-card">
+            <div class="layui-card-header card-top">任务管理</div>
+            <div class="layui-tab layui-tab-brief" lay-filter="demo">
+                <ul class="layui-tab-title">
+                    <li class="layui-this job-li" lay-id="11">任务列表</li>
+                    <li class="job-li" lay-id="22">执行任务详情</li>
+                </ul>
+                <div class="layui-tab-content tab-padding-top">
+                    <div class="layui-card-header">
+                        <h2>
+                            <span id="tab-tittle">任务列表</span>
+                            <i id="refresh" title="刷新"  lay-id="11" class="layui-icon layui-icon-refresh layui-anim" data-anim="layui-anim-fadein" style="font-size:21px;float:right;"></i>
+                            <i id="down_log" title="下载日志" class="layui-icon layui-icon-download-circle" data-anim="layui-anim-fadein" style="font-size:21px;float:right;display: none"></i>
+                        </h2>
+                    </div>
+                    <div class="layui-card-body" id="errmsg">
+                    </div>
+                    <div class="layui-tab-item layui-show" id="jobList">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>操作</th>
+                                <th>任务组</th>
+                                <th>任务名</th>
+                                <th>计划</th>
+                                <th>描述</th>
+                            </tr>
+                            </thead>
+                            <tbody id="jobs">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-tab-item layui-show" id="runingJobs">
+                            <table class="layui-table">
+                                <thead>
+                                <tr>
+                                    <th>执行ID</th>
+                                    <th>任务组</th>
+                                    <th>任务名</th>
+                                    <th>状态</th>
+                                    <th>其他</th>
+                                </tr>
+                                </thead>
+                                <tbody id="runingJobs-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="js/jobs.js"></script>
+</html>

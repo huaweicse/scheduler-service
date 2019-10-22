@@ -1,0 +1,12 @@
+service_description:
+  version: 0.0.1
+  name: scheduler-service
+
+servicecomb:
+  rest:
+    address: 0.0.0.0:18088
+  request:
+    timeout: 10000 # use short timeout
+  loadbalance:
+    userDefinedEndpoint:
+      enabled: true
