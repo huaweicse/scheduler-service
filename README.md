@@ -9,3 +9,11 @@
 ## 界面
 
 ![](docs/image/jobs.png)
+
+## 使用
+
+1. 运行scheduler-website, edge-service, scheduler-server, 访问：
+
+```
+http://localhost:18090/ui/scheduler-website/jobs.html
+```
