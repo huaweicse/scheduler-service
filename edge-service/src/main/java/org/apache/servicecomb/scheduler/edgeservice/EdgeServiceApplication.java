@@ -14,35 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.servicecomb.scheduler.edgeservice;
 
-package org.apache.servicecomb.scheduler.common;
+import org.apache.servicecomb.springboot.starter.provider.EnableServiceComb;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
-public class AlarmContext {
-    private JobContext jobContext;
-    private AlarmLevel alarmLevel;
-    private String alarmMessage;
-
-    public JobContext getJobContext() {
-        return jobContext;
-    }
-
-    public void setJobContext(JobContext jobContext) {
-        this.jobContext = jobContext;
-    }
-
-    public AlarmLevel getAlarmLevel() {
-        return alarmLevel;
-    }
-
-    public void setAlarmLevel(AlarmLevel alarmLevel) {
-        this.alarmLevel = alarmLevel;
-    }
-
-    public String getAlarmMessage() {
-        return alarmMessage;
-    }
-
-    public void setAlarmMessage(String alarmMessage) {
-        this.alarmMessage = alarmMessage;
+@SpringBootApplication
+@EnableServiceComb
+public class EdgeServiceApplication {
+    public static void main(String[] args) throws Exception {
+        try {
+            new SpringApplicationBuilder(EdgeServiceApplication.class).web(false).build().run(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
