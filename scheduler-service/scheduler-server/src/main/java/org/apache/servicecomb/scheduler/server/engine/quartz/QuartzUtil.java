@@ -37,6 +37,7 @@ public final class QuartzUtil {
     try {
       return JobBuilder.newJob().withIdentity(jobMeta.getJobName(), jobMeta.getGroupName())
           .usingJobData(JOB_META_KEY, JSON.writeValueAsString(jobMeta))
+          .storeDurably(true)
           .ofType(SchedulerEngineJob.class)
           .build();
     } catch (JsonProcessingException e) {

@@ -77,4 +77,7 @@ servicecomb:
       rest:
         enabled: false # overriden by CustomVertxRestDispatcher
 
+  codec:
+    printErrorMessage: true
+
 gateway.webroot: /Code/scheduler-service/edge-service/src/main/resources

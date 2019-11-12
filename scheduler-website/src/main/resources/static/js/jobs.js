@@ -19,6 +19,35 @@ function getAllJobs() {
     });
 }
 
+function createJob(formData) {
+    var jobMeta = {};
+    jobMeta.groupName = formData.jobGroup;
+    jobMeta.jobName = formData.jobName;
+    jobMeta.properties = {};
+    jobMeta.properties.x_cron = formData.jobSchedule;
+    jobMeta.properties.x_description = formData.jobDescription;
+
+    $.ajax({
+        type: 'POST',
+        url: "/api/scheduler-service/manage/createJob",
+        contentType: "application/json",
+        data: JSON.stringify(jobMeta),
+        success: function (data, textStatus) {
+            if(data) {
+            errmsg('创建成功');
+            } else {
+            errmsg('创建失败');
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            errmsg('创建失败');
+            console.log(errorThrown);
+        },
+        async: true
+    });
+}
+
 function runningJobs() {
     $.ajax({
         type: 'GET',
@@ -35,11 +64,11 @@ function runningJobs() {
 }
 
 function stopJob(strJob) {
-    var job = JSON.parse(strJob);
     $.ajax({
         type: 'POST',
         url: "/api/scheduler-service/manage/stopJob",
-        data: job,
+        contentType: "application/json",
+        data: strJob,
         success: function (data, textStatus) {
             getAllJobs();
         },
@@ -53,11 +82,11 @@ function stopJob(strJob) {
 
 
 function startJob(strJob) {
-    var job = JSON.parse(strJob);
     $.ajax({
         type: 'POST',
         url: "/api/scheduler-service/manage/startJob",
-        data: job,
+        contentType: "application/json",
+        data: strJob,
         success: function (data, textStatus) {
             getAllJobs();
         },
@@ -70,11 +99,11 @@ function startJob(strJob) {
 }
 
 function executeJob(strJob) {
-    var job = JSON.parse(strJob);
     $.ajax({
         type: 'POST',
         url: "/api/scheduler-service/manage/triggerJob",
-        data: job,
+        contentType: "application/json",
+        data: strJob,
         success: function (data, textStatus) {
             getAllJobs();
         },

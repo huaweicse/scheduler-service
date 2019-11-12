@@ -77,35 +77,37 @@
                     </div>
                     <div class="layui-tab-item">
                         <div class="layui-tab-item layui-show" id="createJob">
+                            <form class="layui-form" action="">
                             <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">分组</label>
                             <div class="layui-input-block">
-                                <input type="text" name="分组" lay-verify="required" lay-reqtext="不能为空" placeholder="分组" autocomplete="on" class="layui-input">
+                                <input type="text" name="jobGroup" lay-verify="required" lay-reqtext="不能为空" placeholder="分组" autocomplete="on" class="layui-input">
                             </div>
                             </div>
                             <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">名称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="名称" lay-verify="required" lay-reqtext="不能为空" placeholder="名称" autocomplete="on" class="layui-input">
+                                <input type="text" name="jobName" lay-verify="required" lay-reqtext="不能为空" placeholder="名称" autocomplete="on" class="layui-input">
                             </div>
                             </div>
                             <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">计划</label>
                             <div class="layui-input-block">
-                                <input type="text" name="计划" lay-verify="required" lay-reqtext="不能为空" placeholder="计划" autocomplete="on" class="layui-input">
+                                <input type="text" name="jobSchedule" lay-verify="required" lay-reqtext="不能为空" placeholder="计划" autocomplete="on" class="layui-input">
                             </div>
                             </div>
                             <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">描述</label>
                             <div class="layui-input-block">
-                                <input type="text" name="描述" lay-verify="required" lay-reqtext="不能为空" placeholder="描述" autocomplete="on" class="layui-input">
+                                <input type="text" name="jobDescription" lay-verify="required" lay-reqtext="不能为空" placeholder="描述" autocomplete="on" class="layui-input">
                             </div>
                             </div>
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
-                                    <button type="submit" class="layui-btn" lay-submit="" onclick="createJob()">创建</button>
+                                    <button type="submit" class="layui-btn" lay-submit=""  lay-filter="create">创建</button>
                                 </div>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -114,6 +116,19 @@
     </div>
 </div>
 
-</body>
 <script type="text/javascript" src="js/jobs.js"></script>
+<script>
+layui.use(['form', 'layedit', 'laydate'], function(){
+  var form = layui.form;
+
+  //监听提交
+  form.on('submit(create)', function(data){
+    createJob(data.field);
+    return false;
+  });
+});
+</script>
+
+</body>
+
 </html>
