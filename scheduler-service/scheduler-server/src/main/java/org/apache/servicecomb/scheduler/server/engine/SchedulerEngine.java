@@ -16,13 +16,20 @@
  */
 package org.apache.servicecomb.scheduler.server.engine;
 
-import org.apache.servicecomb.scheduler.common.Job;
+import java.util.List;
+
 import org.apache.servicecomb.scheduler.common.JobMeta;
 
 public interface SchedulerEngine {
+    boolean createJob(JobMeta jobMeta);
+
     boolean scheduleJob(JobMeta jobMeta, ExecutionEngine engine);
 
-    boolean stopJob(JobMeta jobMeta);
+    boolean unscheduleJob(JobMeta jobMeta);
+
+    boolean checkScheduled(JobMeta meta);
 
     boolean checkExists(JobMeta meta);
+
+    List<JobMeta> getAllJobs();
 }

@@ -11,33 +11,33 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
     <script>
         $(document).ready(function () {
-            getSystemJobs();
+            getAllJobs();
             click_anim();
         });
     </script>
 </head>
 
 <body>
+
 <div class="layui-row">
     <div class="layui-col-md">
         <div class="layui-card">
             <div class="layui-card-header card-top">任务管理</div>
-            <div class="layui-tab layui-tab-brief" lay-filter="demo">
+            <div class="layui-tab">
                 <ul class="layui-tab-title">
                     <li class="layui-this job-li" lay-id="11">任务列表</li>
                     <li class="job-li" lay-id="22">执行任务详情</li>
+                    <li class="job-li" lay-id="33">创建任务</li>
                 </ul>
                 <div class="layui-tab-content tab-padding-top">
-                    <div class="layui-card-header">
-                        <h2>
-                            <span id="tab-tittle">任务列表</span>
-                            <i id="refresh" title="刷新"  lay-id="11" class="layui-icon layui-icon-refresh layui-anim" data-anim="layui-anim-fadein" style="font-size:21px;float:right;"></i>
-                            <i id="down_log" title="下载日志" class="layui-icon layui-icon-download-circle" data-anim="layui-anim-fadein" style="font-size:21px;float:right;display: none"></i>
-                        </h2>
-                    </div>
                     <div class="layui-card-body" id="errmsg">
                     </div>
                     <div class="layui-tab-item layui-show" id="jobList">
+                        <div class="layui-card-header">
+                            <h2>
+                                <i id="refreshJobList" title="刷新"  class="layui-icon layui-icon-refresh layui-anim" data-anim="layui-anim-fadein"></i>
+                            </h2>
+                        </div>
                         <table class="layui-table">
                             <thead>
                             <tr>
@@ -54,6 +54,12 @@
                     </div>
                     <div class="layui-tab-item">
                         <div class="layui-tab-item layui-show" id="runingJobs">
+                            <div class="layui-card-header">
+                                <h2>
+                                    <i id="refreshRuningJobs" title="刷新"  class="layui-icon layui-icon-refresh layui-anim" data-anim="layui-anim-fadein"></i>
+                                    <i id="down_log" title="下载日志" class="layui-icon layui-icon-download-circle" data-anim="layui-anim-fadein"></i>
+                                </h2>
+                            </div>
                             <table class="layui-table">
                                 <thead>
                                 <tr>
@@ -69,11 +75,45 @@
                             </table>
                         </div>
                     </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-tab-item layui-show" id="createJob">
+                            <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">分组</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="分组" lay-verify="required" lay-reqtext="不能为空" placeholder="分组" autocomplete="on" class="layui-input">
+                            </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="名称" lay-verify="required" lay-reqtext="不能为空" placeholder="名称" autocomplete="on" class="layui-input">
+                            </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">计划</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="计划" lay-verify="required" lay-reqtext="不能为空" placeholder="计划" autocomplete="on" class="layui-input">
+                            </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">描述</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="描述" lay-verify="required" lay-reqtext="不能为空" placeholder="描述" autocomplete="on" class="layui-input">
+                            </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="layui-btn" lay-submit="" onclick="createJob()">创建</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 </body>
 <script type="text/javascript" src="js/jobs.js"></script>
 </html>

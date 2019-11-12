@@ -4,10 +4,10 @@
     $('#errmsg').html(msg).addClass("error").show();
 }
 
-function getSystemJobs() {
+function getAllJobs() {
     $.ajax({
         type: 'GET',
-        url: "/api/scheduler-service/manage/getSystemJobs",
+        url: "/api/scheduler-service/manage/getAllJobs",
         success: function (data, textStatus) {
             addJobListTable(data);
         },
@@ -41,7 +41,7 @@ function stopJob(strJob) {
         url: "/api/scheduler-service/manage/stopJob",
         data: job,
         success: function (data, textStatus) {
-            getSystemJobs();
+            getAllJobs();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -59,7 +59,7 @@ function startJob(strJob) {
         url: "/api/scheduler-service/manage/startJob",
         data: job,
         success: function (data, textStatus) {
-            getSystemJobs();
+            getAllJobs();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -76,7 +76,7 @@ function executeJob(strJob) {
         url: "/api/scheduler-service/manage/triggerJob",
         data: job,
         success: function (data, textStatus) {
-            getSystemJobs();
+            getAllJobs();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -176,7 +176,7 @@ layui.use('element', function () {
             $('#refresh').attr('lay-id', '22');
             $('#down_log').show();
         } else {
-            getSystemJobs();
+            getAllJobs();
             $('#refresh').attr('lay-id', '11');
             $('#down_log').hide();
 
@@ -190,7 +190,7 @@ $('#refresh').on('click', function () {
     if ($(this).attr('lay-id') == '22') {
         runningJobs();
     } else {
-        getSystemJobs();
+        getAllJobs();
     }
 })
 $('#down_log').on('click', function () {
