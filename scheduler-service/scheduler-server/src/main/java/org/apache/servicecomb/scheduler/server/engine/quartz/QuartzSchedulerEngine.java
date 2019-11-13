@@ -81,10 +81,15 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
       }
       JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(jobName, jobGroup));
       JobMeta jobMeta = QuartzUtil.jobDetail2JobMeta(jobDetail);
-      Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup)
+      Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup).forJob(jobDetail)
           .withSchedule(CronScheduleBuilder.cronSchedule(jobMeta.getProperty(JobMeta.PROPERTY_CRON))).build();
-      scheduler.scheduleJob(jobDetail, trigger);
+      scheduler.scheduleJob(trigger);
     } catch (SchedulerException e) {
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
+    } catch (RuntimeException e) {
       LOGGER.error("", e);
       response.setSuccess(false);
       response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
@@ -124,7 +129,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
       if (!checkExists(jobName, jobGroup)) {
         return false;
       }
-      return scheduler.getTrigger(TriggerKey.triggerKey(jobName, jobGroup)) == null;
+      return scheduler.getTrigger(TriggerKey.triggerKey(jobName, jobGroup)) != null;
     } catch (SchedulerException e) {
       LOGGER.error("", e);
     }

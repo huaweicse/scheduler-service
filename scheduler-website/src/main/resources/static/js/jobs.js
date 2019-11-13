@@ -48,12 +48,16 @@
         function onError() {
             jobsHTMLAPI.errmsg('查询执行任务失败');
         }
-        manageAPI.runningJobs(jobMeta, onSuccess, onError);
+        manageAPI.runningJobs(onSuccess, onError);
     };
 
     jobsHTMLAPI.scheduleJob = function(jobName, jobGroup) {
         function onSuccess(data) {
-            jobsHTMLAPI.getAllJobs();
+            if(data.success) {
+              jobsHTMLAPI.getAllJobs();
+            } else {
+              jobsHTMLAPI.errmsg('启动任务失败: ' + data.errorMessage);
+            }
         }
         function onError() {
             jobsHTMLAPI.errmsg('查询系统任务失败');
@@ -93,13 +97,13 @@
             $.each(datas, function (i, job) {
                 var styleStop = 'layui-btn-disabled" disabled="true"';
                 var styleStart = 'layui-btn-normal"';
-                if (job.properties.x_exists == 'true') {
+                if (job.properties.x_scheduled == 'true') {
                     styleStart = 'layui-btn-disabled" disabled="true"';
                     styleStop = 'layui-btn-danger" disable';
                 }
                 html += '<tr id="jobs_id_"' + i + ">";
-                html += '<td><input type="button" class=" layui-btn layui-anim layui-btn-ms ' + styleStop + ' data-anim="layui-anim-scaleSpring" value="停止" onclick="jobsHTMLAPI.stopJob(\'' + job.jobName + '\',\'' + job.groupName + '\')"/>'
-                    + '<input type="button" class="layui-btn layui-anim layui-btn-ms ' + styleStart + ' data-anim="layui-anim-scaleSpring" value="启动" onclick="jobsHTMLAPI.startJob(\'' + job.jobName + '\',\'' + job.groupName + '\')"/>'
+                html += '<td><input type="button" class=" layui-btn layui-anim layui-btn-ms ' + styleStop + ' data-anim="layui-anim-scaleSpring" value="停止" onclick="jobsHTMLAPI.unscheduleJob(\'' + job.jobName + '\',\'' + job.groupName + '\')"/>'
+                    + '<input type="button" class="layui-btn layui-anim layui-btn-ms ' + styleStart + ' data-anim="layui-anim-scaleSpring" value="启动" onclick="jobsHTMLAPI.scheduleJob(\'' + job.jobName + '\',\'' + job.groupName + '\')"/>'
                     + '<input type="button" class="layui-btn layui-anim layui-btn-ms layui-btn-green" data-anim="layui-anim-scaleSpring" value="立即执行" onclick="jobsHTMLAPI.executeJob(\'' + job.jobName + '\',\'' + job.groupName + '\')"/>'
                     + '</td>';
                 html += '<td>' + job.groupName + '</td>';
@@ -160,39 +164,3 @@
     };
 
 }());
-
-
-$('.layui-tab-bar').hide();
-
-layui.use('element', function () {
-    var $ = layui.jquery
-        , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
-
-    element.on('tab(demo)', function (elem) {
-        if ($(this).attr('lay-id') == '22') {
-            runningJobs();
-            $('#refresh').attr('lay-id', '22');
-            $('#down_log').show();
-        } else {
-            getAllJobs();
-            $('#refresh').attr('lay-id', '11');
-            $('#down_log').hide();
-
-        }
-        location.hash = 'demo=' + $(this).attr('lay-id');
-        $('#tab-tittle').html($(this).text())
-    });
-
-});
-
-$('#refresh').on('click', function () {
-    if ($(this).attr('lay-id') == '22') {
-        runningJobs();
-    } else {
-        getAllJobs();
-    }
-})
-
-$('#down_log').on('click', function () {
-    window.open(window.location.protocol + "//" + window.location.host + "/api/scheduler-service/manage/logs");
-})

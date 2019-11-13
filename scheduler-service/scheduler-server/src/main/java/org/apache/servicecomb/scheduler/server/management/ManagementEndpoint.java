@@ -80,7 +80,17 @@ public class ManagementEndpoint {
 
   @GetMapping(path = "/getAllJobs")
   public ServiceDataResponse<List<JobMeta>, Void> getAllJobs() {
-    return schedulerEngine.getAllJobs();
+    ServiceDataResponse<List<JobMeta>, Void> response = schedulerEngine.getAllJobs();
+    if (response.isSuccess()) {
+      for (JobMeta m : response.getResult()) {
+        if (schedulerEngine.checkScheduled(m.getJobName(), m.getGroupName())) {
+          m.addProperty(JobMeta.PROPERTY_SCHEDULED, "true");
+        } else {
+          m.addProperty(JobMeta.PROPERTY_SCHEDULED, "false");
+        }
+      }
+    }
+    return response;
   }
 
   @GetMapping(path = "/logs")

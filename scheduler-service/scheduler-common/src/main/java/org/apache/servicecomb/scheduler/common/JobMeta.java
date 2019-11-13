@@ -23,7 +23,7 @@ import java.util.Map;
 public class JobMeta {
     public static final String PROPERTY_CRON = "x_cron";
     public static final String PROPERTY_DESC = "x_description";
-    public static final String PROPERTY_EXISTS = "x_exists";
+    public static final String PROPERTY_SCHEDULED = "x_scheduled";
 
     private String groupName;
     private String jobName;
