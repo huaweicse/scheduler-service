@@ -6,15 +6,25 @@
 
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/layui.js"></script>
+    <script type="text/javascript" src="js/manage.js"></script>
+    <script type="text/javascript" src="js/jobs.js"></script>
+    <script>
+        layui.use(['form'], function(){
+          layui.form.on('submit(create)', function(data){
+            jobsHTMLAPI.createJob(data.field);
+            return false;
+          });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            jobsHTMLAPI.getAllJobs();
+            jobsHTMLAPI.click_anim();
+        });
+    </script>
 
     <link href="css/layui.css" rel="stylesheet" type="text/css" media="all"/>
     <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
-    <script>
-        $(document).ready(function () {
-            getAllJobs();
-            click_anim();
-        });
-    </script>
 </head>
 
 <body>
@@ -115,19 +125,6 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="js/jobs.js"></script>
-<script>
-layui.use(['form', 'layedit', 'laydate'], function(){
-  var form = layui.form;
-
-  //监听提交
-  form.on('submit(create)', function(data){
-    createJob(data.field);
-    return false;
-  });
-});
-</script>
 
 </body>
 

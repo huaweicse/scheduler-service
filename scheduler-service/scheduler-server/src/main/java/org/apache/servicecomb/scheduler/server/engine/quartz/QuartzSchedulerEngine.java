@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.servicecomb.scheduler.common.ErrorCode;
 import org.apache.servicecomb.scheduler.common.JobMeta;
+import org.apache.servicecomb.scheduler.common.ServiceDataResponse;
+import org.apache.servicecomb.scheduler.common.ServiceResponse;
 import org.apache.servicecomb.scheduler.server.engine.ExecutionEngine;
 import org.apache.servicecomb.scheduler.server.engine.SchedulerEngine;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -56,72 +58,107 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
   }
 
   @Override
-  public boolean createJob(JobMeta jobMeta) {
+  public ServiceResponse createJob(JobMeta jobMeta) {
+    ServiceResponse response = ServiceResponse.newSuccessServiceResponse();
     try {
       JobDetail jobDetail = QuartzUtil.jobMeta2JobDetail(jobMeta);
       scheduler.addJob(jobDetail, true);
-      return true;
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
     }
-    return false;
+    return response;
   }
 
   @Override
-  public boolean scheduleJob(JobMeta jobMeta, ExecutionEngine engine) {
+  public ServiceResponse scheduleJob(String jobName, String jobGroup, ExecutionEngine engine) {
+    ServiceResponse response = ServiceResponse.newSuccessServiceResponse();
     try {
-      if(checkExists(jobMeta)) {
-        scheduler.deleteJob(JobKey.jobKey(jobMeta.getJobName(), jobMeta.getGroupName()));
+      if (checkScheduled(jobName, jobGroup)) {
+        scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroup));
       }
-      JobDetail jobDetail = QuartzUtil.jobMeta2JobDetail(jobMeta);
-      Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobMeta.getJobName(), jobMeta.getGroupName())
+      JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(jobName, jobGroup));
+      JobMeta jobMeta = QuartzUtil.jobDetail2JobMeta(jobDetail);
+      Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup)
           .withSchedule(CronScheduleBuilder.cronSchedule(jobMeta.getProperty(JobMeta.PROPERTY_CRON))).build();
       scheduler.scheduleJob(jobDetail, trigger);
-      return true;
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
     }
-    return false;
+    return response;
   }
 
   @Override
-  public boolean unscheduleJob(JobMeta jobMeta) {
+  public ServiceResponse unscheduleJob(String jobName, String jobGroup) {
+    ServiceResponse response = ServiceResponse.newSuccessServiceResponse();
     try {
-      if(!checkExists(jobMeta)) {
-        return true;
+      if (!checkExists(jobName, jobGroup)) {
+        response.setSuccess(false);
+        response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+        response.setErrorMessage("job does not exists.");
+        return response;
       }
-      return scheduler.unscheduleJob(TriggerKey.triggerKey(jobMeta.getJobName(), jobMeta.getGroupName()));
+      if (!scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroup))) {
+        response.setSuccess(false);
+        response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+        response.setErrorMessage("job trigger does not exists.");
+        return response;
+      }
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
     }
-    return false;
+    return response;
   }
 
   @Override
-  public boolean checkScheduled(JobMeta jobMeta) {
+  public boolean checkScheduled(String jobName, String jobGroup) {
     try {
-      if(!checkExists(jobMeta)) {
+      if (!checkExists(jobName, jobGroup)) {
         return false;
       }
-      return scheduler.getTrigger(TriggerKey.triggerKey(jobMeta.getJobName(), jobMeta.getGroupName())) == null;
+      return scheduler.getTrigger(TriggerKey.triggerKey(jobName, jobGroup)) == null;
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
     }
     return false;
   }
 
   @Override
-  public boolean checkExists(JobMeta meta) {
+  public ServiceDataResponse<JobMeta, Void> getJobMeta(String jobName, String jobGroup) {
+    ServiceDataResponse<JobMeta, Void> response = ServiceDataResponse.newSuccessServiceResponse();
     try {
-      return scheduler.checkExists(JobKey.jobKey(meta.getJobName(), meta.getGroupName()));
+      JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(jobName, jobGroup));
+      response.setResult(QuartzUtil.jobDetail2JobMeta(jobDetail));
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
+    }
+    return response;
+  }
+
+  @Override
+  public boolean checkExists(String jobName, String jobGroup) {
+    try {
+      return scheduler.checkExists(JobKey.jobKey(jobName, jobGroup));
+    } catch (SchedulerException e) {
+      LOGGER.error("", e);
     }
     return false;
   }
 
   @Override
-  public List<JobMeta> getAllJobs() {
+  public ServiceDataResponse<List<JobMeta>, Void> getAllJobs() {
+    ServiceDataResponse<List<JobMeta>, Void> response = ServiceDataResponse.newSuccessServiceResponse();
     try {
       Set<JobKey> jobKeySet = scheduler.getJobKeys(GroupMatcher.anyGroup());
       List<JobMeta> result = new ArrayList<>(jobKeySet.size());
@@ -129,13 +166,16 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
         try {
           result.add(QuartzUtil.jobDetail2JobMeta(scheduler.getJobDetail(key)));
         } catch (SchedulerException e) {
-          e.printStackTrace();
+          LOGGER.error("", e);
         }
       });
-      return result;
+      response.setResult(result);
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      LOGGER.error("", e);
+      response.setSuccess(false);
+      response.setErrorCode(ErrorCode.ERROR_PARAMETER_NOT_VALID);
+      response.setErrorMessage(e.getMessage());
     }
-    return null;
+    return response;
   }
 }

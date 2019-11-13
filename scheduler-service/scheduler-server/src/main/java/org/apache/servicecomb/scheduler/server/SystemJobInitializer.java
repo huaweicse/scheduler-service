@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.servicecomb.core.BootListener;
 import org.apache.servicecomb.scheduler.common.JobMeta;
+import org.apache.servicecomb.scheduler.common.ServiceResponse;
 import org.apache.servicecomb.scheduler.server.engine.ExecutionEngine;
 import org.apache.servicecomb.scheduler.server.engine.SchedulerEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,17 @@ public class SystemJobInitializer implements BootListener {
   @Override
   public void onBootEvent(BootEvent bootEvent) {
     if (bootEvent.getEventType().equals(EventType.AFTER_REGISTRY)) {
-      jobMetaList.forEach(meta -> schedulerEngine.scheduleJob(meta, executionEngine));
+      jobMetaList.forEach(meta -> {
+        ServiceResponse response = schedulerEngine.createJob(meta);
+        if (response.isSuccess()) {
+          response = schedulerEngine.scheduleJob(meta.getJobName(), meta.getGroupName(), executionEngine);
+        }
+        if (!response.isSuccess()) {
+          throw new IllegalStateException(String
+              .format("Register system job failed, errorCode=%s, errorMessage=%s", response.getErrorCode(),
+                  response.getErrorMessage()));
+        }
+      });
     }
   }
 }

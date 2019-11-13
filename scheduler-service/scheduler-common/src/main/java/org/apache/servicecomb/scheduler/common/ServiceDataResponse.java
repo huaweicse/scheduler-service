@@ -14,26 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.scheduler.server.engine;
 
-import java.util.List;
+package org.apache.servicecomb.scheduler.common;
 
-import org.apache.servicecomb.scheduler.common.JobMeta;
-import org.apache.servicecomb.scheduler.common.ServiceDataResponse;
-import org.apache.servicecomb.scheduler.common.ServiceResponse;
+/**
+ *  ServiceResponse with contents. When this invocation is successful, the result is set.Otherwise, the error is set.
+ */
+public class ServiceDataResponse<RESULT, ERROR> extends ServiceResponse {
+  private RESULT result;
 
-public interface SchedulerEngine {
-  ServiceResponse createJob(JobMeta jobMeta);
+  private ERROR error;
 
-  ServiceResponse scheduleJob(String jobName, String jobGroup, ExecutionEngine engine);
+  public RESULT getResult() {
+    return result;
+  }
 
-  ServiceResponse unscheduleJob(String jobName, String jobGroup);
+  public void setResult(RESULT result) {
+    this.result = result;
+  }
 
-  boolean checkScheduled(String jobName, String jobGroup);
+  public ERROR getError() {
+    return error;
+  }
 
-  boolean checkExists(String jobName, String jobGroup);
+  public void setError(ERROR error) {
+    this.error = error;
+  }
 
-  ServiceDataResponse<JobMeta, Void> getJobMeta(String jobName, String jobGroup);
-
-  ServiceDataResponse<List<JobMeta>, Void> getAllJobs();
+  public static ServiceDataResponse newSuccessServiceResponse() {
+    return new ServiceDataResponse<>();
+  }
 }

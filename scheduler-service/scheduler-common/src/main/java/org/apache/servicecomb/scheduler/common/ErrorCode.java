@@ -14,26 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.scheduler.server.engine;
 
-import java.util.List;
+package org.apache.servicecomb.scheduler.common;
 
-import org.apache.servicecomb.scheduler.common.JobMeta;
-import org.apache.servicecomb.scheduler.common.ServiceDataResponse;
-import org.apache.servicecomb.scheduler.common.ServiceResponse;
+public final class ErrorCode {
+  private ErrorCode() {
 
-public interface SchedulerEngine {
-  ServiceResponse createJob(JobMeta jobMeta);
+  }
 
-  ServiceResponse scheduleJob(String jobName, String jobGroup, ExecutionEngine engine);
-
-  ServiceResponse unscheduleJob(String jobName, String jobGroup);
-
-  boolean checkScheduled(String jobName, String jobGroup);
-
-  boolean checkExists(String jobName, String jobGroup);
-
-  ServiceDataResponse<JobMeta, Void> getJobMeta(String jobName, String jobGroup);
-
-  ServiceDataResponse<List<JobMeta>, Void> getAllJobs();
+  public static final int ERROR_PARAMETER_NOT_VALID = 100_000;
 }

@@ -23,14 +23,18 @@ import java.util.List;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.apache.servicecomb.scheduler.common.JobContext;
 import org.apache.servicecomb.scheduler.common.JobMeta;
+import org.apache.servicecomb.scheduler.common.ServiceDataResponse;
+import org.apache.servicecomb.scheduler.common.ServiceResponse;
 import org.apache.servicecomb.scheduler.server.engine.ExecutionEngine;
 import org.apache.servicecomb.scheduler.server.engine.SchedulerEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestSchema(schemaId = "ManagementEndpoint")
 @RequestMapping(path = "/manage")
@@ -42,25 +46,31 @@ public class ManagementEndpoint {
   @Autowired
   SchedulerEngine schedulerEngine;
 
-  @PostMapping(path = "/triggerJob")
-  public boolean triggerJob(@RequestBody JobMeta jobMeta) {
-    executionEngine.trigger(jobMeta);
-    return true;
-  }
-
   @PostMapping(path = "/createJob")
-  public boolean createJob(@RequestBody JobMeta jobMeta) {
+  public ServiceResponse createJob(@RequestBody JobMeta jobMeta) {
     return schedulerEngine.createJob(jobMeta);
   }
 
-  @PostMapping(path = "/unscheduleJob")
-  public boolean unscheduleJob(@RequestBody JobMeta jobMeta) {
-    return schedulerEngine.unscheduleJob(jobMeta);
+  @GetMapping(path = "/scheduleJob")
+  public ServiceResponse scheduleJob(@RequestParam("jobName") String jobName,
+      @RequestParam("jobGroup") String jobGroup) {
+    return schedulerEngine.scheduleJob(jobName, jobGroup, executionEngine);
   }
 
-  @PostMapping(path = "/startJob")
-  public boolean startJob(@RequestBody JobMeta jobMeta) {
-    return schedulerEngine.scheduleJob(jobMeta, executionEngine);
+  @DeleteMapping(path = "/unscheduleJob")
+  public ServiceResponse unscheduleJob(@RequestParam("jobName") String jobName,
+      @RequestParam("jobGroup") String jobGroup) {
+    return schedulerEngine.unscheduleJob(jobName, jobGroup);
+  }
+
+  @GetMapping(path = "/executeJob")
+  public ServiceResponse executeJob(@RequestParam("jobName") String jobName,
+      @RequestParam("jobGroup") String jobGroup) {
+    ServiceDataResponse<JobMeta, Void> response = schedulerEngine.getJobMeta(jobName, jobGroup);
+    if (response.isSuccess()) {
+      executionEngine.trigger(response.getResult());
+    }
+    return response;
   }
 
   @GetMapping(path = "/runningJobs")
@@ -69,7 +79,7 @@ public class ManagementEndpoint {
   }
 
   @GetMapping(path = "/getAllJobs")
-  public List<JobMeta> getAllJobs() {
+  public ServiceDataResponse<List<JobMeta>, Void> getAllJobs() {
     return schedulerEngine.getAllJobs();
   }
 

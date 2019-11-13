@@ -14,26 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.scheduler.server.engine;
 
-import java.util.List;
+package org.apache.servicecomb.scheduler.common;
 
-import org.apache.servicecomb.scheduler.common.JobMeta;
-import org.apache.servicecomb.scheduler.common.ServiceDataResponse;
-import org.apache.servicecomb.scheduler.common.ServiceResponse;
+public class ServiceResponse {
+  protected boolean success;
 
-public interface SchedulerEngine {
-  ServiceResponse createJob(JobMeta jobMeta);
+  protected int errorCode;
 
-  ServiceResponse scheduleJob(String jobName, String jobGroup, ExecutionEngine engine);
+  protected String errorMessage;
 
-  ServiceResponse unscheduleJob(String jobName, String jobGroup);
+  public ServiceResponse() {
+    success = true;
+  }
 
-  boolean checkScheduled(String jobName, String jobGroup);
+  public boolean isSuccess() {
+    return success;
+  }
 
-  boolean checkExists(String jobName, String jobGroup);
+  public void setSuccess(boolean success) {
+    this.success = success;
+  }
 
-  ServiceDataResponse<JobMeta, Void> getJobMeta(String jobName, String jobGroup);
+  public int getErrorCode() {
+    return errorCode;
+  }
 
-  ServiceDataResponse<List<JobMeta>, Void> getAllJobs();
+  public void setErrorCode(int errorCode) {
+    this.errorCode = errorCode;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
+
+  public static ServiceResponse newSuccessServiceResponse() {
+    return new ServiceResponse();
+  }
 }
